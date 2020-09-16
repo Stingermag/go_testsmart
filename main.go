@@ -24,7 +24,7 @@ type reqestt struct {
 	} `json:"values"`
 }
 
-func dellogs(logfile *os.File){
+func deloldlogs(logfile *os.File){
 	fileScanner := bufio.NewScanner(logfile)
 	lineCount := 0
 	for fileScanner.Scan() {
@@ -51,7 +51,7 @@ func dellogs(logfile *os.File){
 
 func insertToBD(t reqestt, db *sql.DB){
 	//создание строки запроса
-	log.Printf("%v\n", "Попытка обращения к бд" + t.Table)
+	log.Printf("%v\n", "Попытка обращения к базе данных для записи таблицы " + t.Table)
 	var querry = "insert into " + t.Table + " ( " + t.Into[0].Column
 	for i := 1; i < len(t.Into); i++{
 		querry = querry + ", " + t.Into[i].Column
@@ -71,7 +71,7 @@ func insertToBD(t reqestt, db *sql.DB){
 	defer rows.Close()
 	log.Printf("%v\n", "Запись успешна в таблицу "+  t.Table )
 }
-
+//функция с подключением к бд и записью тела запроса
 func test(rw http.ResponseWriter, req *http.Request) {
 
 	//указание вывода лого в файл
@@ -81,7 +81,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	}
 	log.SetOutput(logfile)
 	defer logfile.Close()
-	dellogs(logfile)
+	deloldlogs(logfile)
 	logfile, err = os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
 	if err != nil {
 		log.Fatalln(err)
@@ -95,7 +95,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 
 
 	//подключение к бд
-	log.Printf("%v\n", "Попытка подключения к бд")
+	log.Printf("%v\n", "Попытка подключения к базе данных")
 	db, err := sql.Open("mysql", "root:password@/go_testsmart_user")
 	if err != nil {
 		panic(err)
@@ -104,36 +104,38 @@ func test(rw http.ResponseWriter, req *http.Request) {
 
 	//проверка на успешное подключение
 	if db.Ping() != nil {
-		log.Printf("%v\n", "Ошибка при подключении к бд go_testsmart_user ")
-		connect := 0
+		log.Printf("%v\n", "Ошибка при подключении к базе данных ")
 		timer1 := time.NewTimer(time.Second*10)
-		{
+		go func(){
 			<-timer1.C
 			db.Close()
-			log.Printf("%v\n", "Попытка переподключения к бд")
+			log.Printf("%v\n", "Попытка переподключения к базе данных")
 			//переподключение к бд
 			db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
 			if err != nil {
 				panic(err)
 			}
-			log.Printf("%v\n", "Попытка переподключения к бд2")
+
 			//проверка на успешное подключение
 			if db.Ping() != nil {
-				log.Printf("%v\n", "Ошибка при повторном подключении к бд go_testsmart_user ")
+				log.Printf("%v\n", "Не удалось повторно записать строку в бд go_testsmart_user ")
 				return
-			}
-			log.Printf("%v\n", "Попытка переподключения к бд3")
-			connect = 1
-		}
-		if(connect == 0){
-			return
-		}
-	}
-	defer db.Close()
-	log.Printf("%v\n", "Подключение успешно")
+			}else {
+				defer db.Close()
+				log.Printf("%v\n", "Подключение успешно")
 
-	//функция обработки входящих запросов
-	insertToBD(re, db)
+				//функция обработки входящих запросов
+				insertToBD(re, db)
+			}
+		}()
+	} else {
+		defer db.Close()
+		log.Printf("%v\n", "Подключение успешно")
+
+		//функция обработки входящих запросов
+		insertToBD(re, db)
+	}
+
 }
 
 func main() {

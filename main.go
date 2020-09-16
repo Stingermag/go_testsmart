@@ -13,18 +13,15 @@ import (
 	"time"
 )
 
+
 type reqestt struct {
-	Table string `json:"table"`
-	Into struct {
-		Table1 string `json:"table1"`
-		Table2 string `json:"table2"`
-		Table3 string `json:"table3"`
-	}
-	Values struct {
-		Name string `json:"name"`
-		Surname string `json:"surname"`
-		Age int `json:"age"`
-	}
+	Into []struct {
+		Column string `json:"column"`
+	} `json:"into"`
+	Table  string `json:"table"`
+	Values []struct {
+		Value string `json:"value"`
+	} `json:"values"`
 }
 
 func dellogs(logfile *os.File){
@@ -53,25 +50,26 @@ func dellogs(logfile *os.File){
 }
 
 func insertToBD(t reqestt, db *sql.DB){
+	//создание строки запроса
+	log.Printf("%v\n", "Попытка обращения к бд" + t.Table)
+	var querry = "insert into " + t.Table + " ( " + t.Into[0].Column
+	for i := 1; i < len(t.Into); i++{
+		querry = querry + ", " + t.Into[i].Column
+	}
+	querry = querry + " ) values ( \"" + t.Values[0].Value + "\" "
+	for i := 1; i < len(t.Values); i++{
+		querry = querry + ", \"" + t.Values[i].Value+ "\""
+	}
+	querry = querry + ")"
 
-	log.Printf("%v\n", "Попытка обращения к бд")
-
-	var querry = "insert into " + t.Table + " ( " + t.Into.Table1 +" , " + t.Into.Table2 +" , " + t.Into.Table3 + " ) values (?,?,?)"
 	//инсерт в бд
-	res, err := db.Prepare(querry)
+	rows, err := db.Query(querry)
 	if err != nil {
-		log.Printf("%v\n", "Запись не удалась "+  t.Values.Name +" "+ t.Values.Surname + " ERROR: " + err.Error())
-	//	panic(err)
+		log.Printf("%v\n", "Запись не удалась в таблицу "+  t.Table + " ERROR: " + err.Error())
 		return
 	}
-	_, er := res.Exec(t.Values.Name,t.Values.Surname,t.Values.Age)
-	if er != nil {
-		log.Printf("%v\n", "Запись не удалась "+  t.Values.Name +" "+ t.Values.Surname + " ERROR: " + er.Error())
-		return
-	//	panic(er.Error())
-	}
-
-	log.Printf("%v\n", "Запись успешна "+  t.Values.Name +" "+ t.Values.Surname)
+	defer rows.Close()
+	log.Printf("%v\n", "Запись успешна в таблицу "+  t.Table )
 }
 
 func test(rw http.ResponseWriter, req *http.Request) {
@@ -89,28 +87,20 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		log.Fatalln(err)
 	}
 	log.SetOutput(logfile)
-	//взятие тела запроса
-	dec, err := ioutil.ReadAll(req.Body)
-	defer req.Body.Close()
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
+
+
+	//запись тела запроса в стракт
 	var re reqestt
-	err = json.Unmarshal(dec,&re)
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
+	json.NewDecoder(req.Body).Decode(&re)
 
-
-	log.Printf("%v\n", "Попытка подключения к бд")
 
 	//подключение к бд
+	log.Printf("%v\n", "Попытка подключения к бд")
 	db, err := sql.Open("mysql", "root:password@/go_testsmart_user")
 	if err != nil {
 		panic(err)
 	}
+
 
 	//проверка на успешное подключение
 	if db.Ping() != nil {
@@ -121,7 +111,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 			<-timer1.C
 			db.Close()
 			log.Printf("%v\n", "Попытка переподключения к бд")
-			//подключение к бд
+			//переподключение к бд
 			db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
 			if err != nil {
 				panic(err)
@@ -132,24 +122,17 @@ func test(rw http.ResponseWriter, req *http.Request) {
 				log.Printf("%v\n", "Ошибка при повторном подключении к бд go_testsmart_user ")
 				return
 			}
-			fmt.Print("успешно")
 			log.Printf("%v\n", "Попытка переподключения к бд3")
 			connect = 1
 		}
 		if(connect == 0){
-			fmt.Print("неуспешно")
 			return
-
 		}
-		fmt.Print("успешно")
-
 	}
-	fmt.Print("324567")
 	defer db.Close()
-	fmt.Print("324567")
 	log.Printf("%v\n", "Подключение успешно")
 
-	//обработка входящих запросов
+	//функция обработки входящих запросов
 	insertToBD(re, db)
 }
 

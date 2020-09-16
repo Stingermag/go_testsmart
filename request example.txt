@@ -1,0 +1,21 @@
+{
+"table": "users",
+"into":	[{
+	"column": "name"
+	},
+	{
+	"column": "surname"
+	},
+	{
+	"column": "age"
+	}],
+"values":[{
+	"value": "Dima"
+	},
+	{
+	"value": "Koles"
+	},
+	{
+	"value": "45"
+	}]
+}

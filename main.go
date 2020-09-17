@@ -5,14 +5,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"time"
-)
 
+	_ "github.com/go-sql-driver/mysql"
+)
 
 type reqestt struct {
 	Into []struct {
@@ -24,14 +24,14 @@ type reqestt struct {
 	} `json:"values"`
 }
 
-func deloldlogs(logfile *os.File){
+func deloldlogs(logfile *os.File) {
 	fileScanner := bufio.NewScanner(logfile)
 	lineCount := 0
 	for fileScanner.Scan() {
 		lineCount++
 	}
-	fmt.Println("number of lines logs:", lineCount)
-	if(lineCount > 20){
+	//количество сохраняемых строк логов
+	if lineCount > 40 {
 
 		input, err := ioutil.ReadFile("test.log")
 		if err != nil {
@@ -49,28 +49,29 @@ func deloldlogs(logfile *os.File){
 	}
 }
 
-func insertToBD(t reqestt, db *sql.DB){
+func insertToBD(t reqestt, db *sql.DB) {
 	//создание строки запроса
-	log.Printf("%v\n", "Попытка обращения к базе данных для записи таблицы " + t.Table)
+	log.Print("INFO \t", "Попытка обращения к базе данных для записи таблицы "+t.Table)
 	var querry = "insert into " + t.Table + " ( " + t.Into[0].Column
-	for i := 1; i < len(t.Into); i++{
+	for i := 1; i < len(t.Into); i++ {
 		querry = querry + ", " + t.Into[i].Column
 	}
 	querry = querry + " ) values ( \"" + t.Values[0].Value + "\" "
-	for i := 1; i < len(t.Values); i++{
-		querry = querry + ", \"" + t.Values[i].Value+ "\""
+	for i := 1; i < len(t.Values); i++ {
+		querry = querry + ", \"" + t.Values[i].Value + "\""
 	}
 	querry = querry + ")"
 
 	//инсерт в бд
 	rows, err := db.Query(querry)
 	if err != nil {
-		log.Printf("%v\n", "Запись не удалась в таблицу "+  t.Table + " ERROR: " + err.Error())
+		log.Print("ERROR \t", "Запись не удалась в таблицу "+t.Table+" ERROR: "+err.Error())
 		return
 	}
 	defer rows.Close()
-	log.Printf("%v\n", "Запись успешна в таблицу "+  t.Table )
+	log.Print("INFO \t", "Запись успешна в таблицу "+t.Table)
 }
+
 //функция с подключением к бд и записью тела запроса
 func test(rw http.ResponseWriter, req *http.Request) {
 
@@ -79,6 +80,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	log.SetOutput(logfile)
 	defer logfile.Close()
 	deloldlogs(logfile)
@@ -88,28 +90,26 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	}
 	log.SetOutput(logfile)
 
-
-	//запись тела запроса в стракт
+	//запись тела запроса в структуру
 	var re reqestt
 	json.NewDecoder(req.Body).Decode(&re)
 
-
 	//подключение к бд
-	log.Printf("%v\n", "Попытка подключения к базе данных")
+	log.Print("INFO \t", "Попытка подключения к базе данных")
 	db, err := sql.Open("mysql", "root:password@/go_testsmart_user")
 	if err != nil {
 		panic(err)
 	}
 
-
 	//проверка на успешное подключение
 	if db.Ping() != nil {
-		log.Printf("%v\n", "Ошибка при подключении к базе данных ")
-		timer1 := time.NewTimer(time.Second*10)
-		go func(){
+		log.Print("ERROR \t", "Ошибка при подключении к базе данных. База данных выключена.")
+
+		timer1 := time.NewTimer(time.Second * 10)
+		go func() {
 			<-timer1.C
 			db.Close()
-			log.Printf("%v\n", "Попытка переподключения к базе данных")
+			log.Print("INFO \t", "Попытка повторного подключения к базе данных")
 			//переподключение к бд
 			db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
 			if err != nil {
@@ -118,11 +118,11 @@ func test(rw http.ResponseWriter, req *http.Request) {
 
 			//проверка на успешное подключение
 			if db.Ping() != nil {
-				log.Printf("%v\n", "Не удалось повторно записать строку в бд go_testsmart_user ")
+				log.Print("ERROR \t", "Ошибка при подключении к базе данных. База данных выключена.")
 				return
-			}else {
+			} else {
 				defer db.Close()
-				log.Printf("%v\n", "Подключение успешно")
+				log.Print("INFO \t", "Подключение к базе данных прошло успешно")
 
 				//функция обработки входящих запросов
 				insertToBD(re, db)
@@ -130,7 +130,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		}()
 	} else {
 		defer db.Close()
-		log.Printf("%v\n", "Подключение успешно")
+		log.Print("INFO \t", "Подключение к базе данных прошло успешно")
 
 		//функция обработки входящих запросов
 		insertToBD(re, db)

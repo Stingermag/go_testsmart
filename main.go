@@ -26,6 +26,7 @@ type reqeststruct struct {
 	} `json:"values"`
 }
 
+//функция удаляет старые логи
 func deloldlogs(logfile *os.File) {
 	fileScanner := bufio.NewScanner(logfile)
 	lineCount := 0
@@ -49,8 +50,14 @@ func deloldlogs(logfile *os.File) {
 		os.Create("test.log")
 	}
 }
+
+//валидация размерности
 func validatesize(requesrobj reqeststruct) bool {
 
+	if len(requesrobj.Into) != len(requesrobj.Values) {
+		log.Print("ERROR \t", "Количество аргументов ("+strconv.Itoa(len(requesrobj.Into))+") не равно количеству заполняемых полей таблицы ("+strconv.Itoa(len(requesrobj.Values))+")")
+		return true
+	}
 	for i := 0; i < len(requesrobj.Into); i++ {
 		strsize, _ := strconv.Atoi(requesrobj.Into[i].Size)
 		if strsize < len(requesrobj.Values[i].Value) {
@@ -60,6 +67,8 @@ func validatesize(requesrobj reqeststruct) bool {
 	}
 	return false
 }
+
+//создвние запроса и ввод в бд
 func insertToBD(requesrobj reqeststruct, db *sql.DB) {
 	//создание строки запроса
 	log.Print("INFO \t", "Попытка обращения к базе данных для записи таблицы "+requesrobj.Table)
@@ -106,7 +115,6 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	var requesrobj reqeststruct
 	json.NewDecoder(req.Body).Decode(&requesrobj)
 	if validatesize(requesrobj) {
-		fmt.Print("loh")
 		return
 	}
 
@@ -154,7 +162,6 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		//функция обработки входящих запросов
 		insertToBD(requesrobj, db)
 	}
-
 }
 
 func main() {

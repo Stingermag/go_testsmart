@@ -1,41 +1,44 @@
-2020/09/17 17:16:22 INFO 	Попытка подключения к базе данных
-2020/09/17 17:16:22 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:16:22 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:16:22 ERROR 	Запись не удалась в таблицу users ERROR: Error 1264: Out of range value for column 'age' at row 1
-2020/09/17 17:16:22 INFO 	Запрос: insert into users ( name, surname, age ) values ( "Dima" , "Koles", "455555555555555555")
-2020/09/17 17:16:35 INFO 	Попытка подключения к базе данных
-2020/09/17 17:16:35 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:16:35 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:16:35 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: '' for column 'age' at row 1
-2020/09/17 17:16:35 INFO 	Запрос: insert into users ( name, surname, age ) values ( "Dima" , "Koles", "")
-2020/09/17 17:16:50 INFO 	Попытка подключения к базе данных
-2020/09/17 17:16:50 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:16:50 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:16:50 INFO 	Запись успешна в таблицу users
-2020/09/17 17:17:02 INFO 	Попытка подключения к базе данных
-2020/09/17 17:17:02 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:17:02 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:17:02 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: '' for column 'age' at row 1
-2020/09/17 17:17:02 INFO 	Запрос: insert into users ( name, surname, age ) values ( "Dima" , "Koles", "")
-2020/09/17 17:18:19 INFO 	Попытка подключения к базе данных
-2020/09/17 17:18:19 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:18:19 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:18:19 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: 'tre' for column 'age' at row 1
-2020/09/17 17:18:19 INFO 	Запрос: insert into users ( name, surname, age ) values ( "Dima" , "Koles", "tre")
-2020/09/17 17:19:30 INFO 	Попытка подключения к базе данных
-2020/09/17 17:19:30 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:19:30 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:19:30 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: 'tre' for column 'age' at row 1 in insert into users ( name, surname, age ) values ( "Dima" , "Koles", "tre")
-2020/09/17 17:20:58 INFO 	Попытка подключения к базе данных
-2020/09/17 17:20:58 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:20:58 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:20:58 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: 'tre' for column 'age' at row 1 in [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "tre")]
-2020/09/17 17:21:46 INFO 	Попытка подключения к базе данных
-2020/09/17 17:21:46 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:21:46 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:21:46 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: 'tre' for column 'age' at row 1 REQUEST: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "tre")]
-2020/09/17 17:25:35 INFO 	Попытка подключения к базе данных
-2020/09/17 17:25:36 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 17:25:36 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 17:25:36 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "tre")]
-2020/09/17 17:25:36 ERROR 	Запись не удалась в таблицу users ERROR: Error 1366: Incorrect integer value: 'tre' for column 'age' at row 1
+2020/09/17 19:30:59 ERROR 	Полученные данные из запроса не валидны. Аргумент 5555555555544 имеет выход за размеры поля age(3)
+2020/09/17 19:31:14 INFO 	Попытка подключения к базе данных
+2020/09/17 19:31:14 INFO 	Подключение к базе данных прошло успешно
+2020/09/17 19:31:14 INFO 	Попытка обращения к базе данных для записи таблицы users
+2020/09/17 19:31:14 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "5")]
+2020/09/17 19:31:15 INFO 	Запись успешно добавлена в таблицу users
+2020/09/17 19:31:26 ERROR 	Полученные данные из запроса не валидны. Аргумент fsdfs имеет выход за размеры поля age(3)
+2020/09/17 19:31:36 INFO 	Попытка подключения к базе данных
+2020/09/17 19:31:36 INFO 	Подключение к базе данных прошло успешно
+2020/09/17 19:31:36 INFO 	Попытка обращения к базе данных для записи таблицы users
+2020/09/17 19:31:36 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "ew")]
+2020/09/17 19:31:36 ERROR 	Запись  в таблицуusers не удалась Error 1366: Incorrect integer value: 'ew' for column 'age' at row 1
+2020/09/17 19:35:57 INFO 	Попытка подключения к базе данных
+2020/09/17 19:35:57 INFO 	Подключение к базе данных прошло успешно
+2020/09/17 19:35:57 INFO 	Попытка обращения к базе данных для записи таблицы users
+2020/09/17 19:35:57 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "ew")]
+2020/09/17 19:35:57 ERROR 	Запись  в таблицуusers не удалась Error 1366: Incorrect integer value: 'ew' for column 'age' at row 1
+2020/09/17 19:36:07 ERROR 	Полученные данные из запроса не валидны. Запись 534534ew (8) имеет выход за размеры поля age(3)
+2020/09/17 20:07:20 ERROR 	Полученные данные из запроса не валидны. Запись 534534ew (8) имеет выход за размеры поля age(3)
+2020/09/17 20:07:37 INFO 	Попытка подключения к базе данных
+2020/09/17 20:07:37 INFO 	Подключение к базе данных прошло успешно
+2020/09/17 20:07:37 INFO 	Попытка обращения к базе данных для записи таблицы users
+2020/09/17 20:07:37 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, sеurname, age ) values ( "Dima" , "Koles", "43")]
+2020/09/17 20:07:37 ERROR 	Запись  в таблицуusers не удалась Error 1054: Unknown column 'sеurname' in 'field list'
+2020/09/17 20:08:15 http: panic serving [::1]:62496: runtime error: index out of range [2] with length 2
+goroutine 6 [running]:
+net/http.(*conn).serve.func1(0xc00005cbe0)
+	c:/go/src/net/http/server.go:1801 +0x147
+panic(0x713940, 0xc00000ab80)
+	c:/go/src/runtime/panic.go:975 +0x3e9
+main.validatesize(0xc00014c000, 0x3, 0x4, 0xc000012b08, 0x5, 0xc00001e400, 0x2, 0x4, 0x685abc)
+	D:/Server/data/htdocs/goProj/main.go:56 +0x31a
+main.test(0x78e240, 0xc0001361c0, 0xc000146000)
+	D:/Server/data/htdocs/goProj/main.go:108 +0x351
+net/http.HandlerFunc.ServeHTTP(0x7495d8, 0x78e240, 0xc0001361c0, 0xc000146000)
+	c:/go/src/net/http/server.go:2042 +0x4b
+net/http.(*ServeMux).ServeHTTP(0x90fe40, 0x78e240, 0xc0001361c0, 0xc000146000)
+	c:/go/src/net/http/server.go:2417 +0x1b7
+net/http.serverHandler.ServeHTTP(0xc000136000, 0x78e240, 0xc0001361c0, 0xc000146000)
+	c:/go/src/net/http/server.go:2843 +0xaa
+net/http.(*conn).serve(0xc00005cbe0, 0x78e800, 0xc00008a000)
+	c:/go/src/net/http/server.go:1925 +0x8ad
+created by net/http.(*Server).Serve
+	c:/go/src/net/http/server.go:2969 +0x36d

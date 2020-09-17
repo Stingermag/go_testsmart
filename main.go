@@ -102,8 +102,8 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	//проверка на успешное подключение
-	if db.Ping() != nil {
-		log.Print("ERROR \t", "Ошибка при подключении к базе данных. База данных выключена.")
+	if err = db.Ping(); err != nil {
+		log.Print("ERROR \t", "Ошибка при подключении к базе данных "+err.Error())
 
 		timer1 := time.NewTimer(time.Second * 10)
 		go func() {
@@ -117,8 +117,8 @@ func test(rw http.ResponseWriter, req *http.Request) {
 			}
 
 			//проверка на успешное подключение
-			if db.Ping() != nil {
-				log.Print("ERROR \t", "Ошибка при подключении к базе данных. База данных выключена.")
+			if err = db.Ping(); err != nil {
+				log.Print("ERROR \t", "Ошибка при подключении к базе данных "+err.Error())
 				return
 			} else {
 				defer db.Close()

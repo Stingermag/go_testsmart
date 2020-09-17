@@ -51,9 +51,13 @@ func deloldlogs(logfile *os.File) {
 	}
 }
 
-//валидация размерности
+//валидация размерности и количества аргументов
 func validatesize(requesrobj reqeststruct) bool {
 
+	if len(requesrobj.Into) != 0 && len(requesrobj.Values) != 0 {
+		log.Print("ERROR \t", "Количество аргументов для ввода в базу данных равно нулю")
+		return true
+	}
 	if len(requesrobj.Into) != len(requesrobj.Values) {
 		log.Print("ERROR \t", "Количество аргументов ("+strconv.Itoa(len(requesrobj.Into))+") не равно количеству заполняемых полей таблицы ("+strconv.Itoa(len(requesrobj.Values))+")")
 		return true

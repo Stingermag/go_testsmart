@@ -1,13 +1,16 @@
 {
 "table": "users",
 "into":	[{
-	"column": "name"
+	"column": "name",
+	"size":"100"
 	},
 	{
-	"column": "surname"
+	"column": "surname",
+	"size":"100"
 	},
 	{
-	"column": "age"
+	"column": "age",
+	"size":"3"
 	}],
 "values":[{
 	"value": "Dima"
@@ -16,6 +19,6 @@
 	"value": "Koles"
 	},
 	{
-	"value": "45"
+	"value": "43"
 	}]
 }

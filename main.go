@@ -52,20 +52,20 @@ func deloldlogs(logfile *os.File) {
 }
 
 //валидация размерности и количества аргументов
-func validatesize(requesrobj reqeststruct) bool {
+func validatesize(requestobj reqeststruct) bool {
 
-	if len(requesrobj.Into) == 0 || len(requesrobj.Values) == 0 {
+	if len(requestobj.Into) == 0 || len(requestobj.Values) == 0 {
 		log.Print("ERROR \t", "Number of arguments for insert to bata base is null")
 		return true
 	}
-	if len(requesrobj.Into) != len(requesrobj.Values) {
-		log.Print("ERROR \t", "Number of arguments ("+strconv.Itoa(len(requesrobj.Into))+") not equal to the number of filled table fields ("+strconv.Itoa(len(requesrobj.Values))+")")
+	if len(requestobj.Into) != len(requestobj.Values) {
+		log.Print("ERROR \t", "Number of arguments ("+strconv.Itoa(len(requestobj.Into))+") not equal to the number of filled table fields ("+strconv.Itoa(len(requestobj.Values))+")")
 		return true
 	}
-	for i := 0; i < len(requesrobj.Into); i++ {
-		strsize, _ := strconv.Atoi(requesrobj.Into[i].Size)
-		if strsize < len(requesrobj.Values[i].Value) {
-			log.Print("ERROR \t", "The received data from the request is not valid. Argument ["+requesrobj.Values[i].Value+"] ("+strconv.Itoa(len(requesrobj.Values[i].Value))+") is outside the field size "+requesrobj.Into[i].Column+"("+requesrobj.Into[i].Size+")")
+	for i := 0; i < len(requestobj.Into); i++ {
+		strsize, _ := strconv.Atoi(requestobj.Into[i].Size)
+		if strsize < len(requestobj.Values[i].Value) {
+			log.Print("ERROR \t", "The received data from the request is not valid. Argument ["+requestobj.Values[i].Value+"] ("+strconv.Itoa(len(requestobj.Values[i].Value))+") is outside the field size "+requestobj.Into[i].Column+"("+requestobj.Into[i].Size+")")
 			return true
 		}
 	}
@@ -116,9 +116,9 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	log.SetOutput(logfile)
 
 	//запись тела запроса в структуру
-	var requesrobj reqeststruct
-	json.NewDecoder(req.Body).Decode(&requesrobj)
-	if validatesize(requesrobj) {
+	var requestobj reqeststruct
+	json.NewDecoder(req.Body).Decode(&requestobj)
+	if validatesize(requestobj) {
 		return
 	}
 
@@ -159,7 +159,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 					log.Print("INFO \t", "Database connection was successful ")
 
 					//функция ввода в базу данных
-					insertToBD(requesrobj, db)
+					insertToBD(requestobj, db)
 					return
 
 				}
@@ -170,7 +170,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		log.Print("INFO \t", "Database connection was successful")
 
 		//функция ввода в базу данных
-		insertToBD(requesrobj, db)
+		insertToBD(requestobj, db)
 	}
 }
 

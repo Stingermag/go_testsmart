@@ -1,18 +1,12 @@
-2020/09/21 10:59:28 INFO 	Trying to connect to the database 
-2020/09/21 10:59:30 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
-2020/09/21 10:59:33 INFO 	Trying to reconnect to the database
-2020/09/21 10:59:35 INFO 	Database connection was successful 
-2020/09/21 10:59:35 INFO 	Try to access the database to write a table users
-2020/09/21 10:59:35 INFO 	Database query prepared: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "43")]
-2020/09/21 10:59:35 INFO 	The row was successfully added to the table users
-2020/09/21 10:59:56 INFO 	Trying to connect to the database 
-2020/09/21 10:59:58 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
-2020/09/21 11:00:01 INFO 	Trying to reconnect to the database
-2020/09/21 11:00:03 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
-2020/09/21 11:00:06 INFO 	Trying to reconnect to the database
-2020/09/21 11:00:08 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
-2020/09/21 11:00:11 INFO 	Trying to reconnect to the database
-2020/09/21 11:00:13 INFO 	Database connection was successful 
-2020/09/21 11:00:13 INFO 	Try to access the database to write a table users
-2020/09/21 11:00:13 INFO 	Database query prepared: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "43")]
-2020/09/21 11:00:13 INFO 	The row was successfully added to the table users
+2020/09/21 11:15:59 INFO 	Trying to connect to the database 
+2020/09/21 11:16:01 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:16:04 INFO 	Trying to reconnect to the database
+2020/09/21 11:16:06 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:16:09 INFO 	Trying to reconnect to the database
+2020/09/21 11:16:11 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:16:14 INFO 	Trying to reconnect to the database
+2020/09/21 11:16:17 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:16:20 INFO 	Trying to reconnect to the database
+2020/09/21 11:16:22 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:16:25 INFO 	Trying to reconnect to the database
+2020/09/21 11:16:27 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.

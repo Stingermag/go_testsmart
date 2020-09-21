@@ -1,6 +1,18 @@
-2020/09/17 20:15:39 ERROR 	Количество аргументов (3) не равно количеству заполняемых полей таблицы (2)
-2020/09/17 20:15:45 INFO 	Попытка подключения к базе данных
-2020/09/17 20:15:45 INFO 	Подключение к базе данных прошло успешно
-2020/09/17 20:15:45 INFO 	Попытка обращения к базе данных для записи таблицы users
-2020/09/17 20:15:45 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "43")]
-2020/09/17 20:15:45 INFO 	Запись успешно добавлена в таблицу users
+2020/09/21 10:59:28 INFO 	Trying to connect to the database 
+2020/09/21 10:59:30 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 10:59:33 INFO 	Trying to reconnect to the database
+2020/09/21 10:59:35 INFO 	Database connection was successful 
+2020/09/21 10:59:35 INFO 	Try to access the database to write a table users
+2020/09/21 10:59:35 INFO 	Database query prepared: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "43")]
+2020/09/21 10:59:35 INFO 	The row was successfully added to the table users
+2020/09/21 10:59:56 INFO 	Trying to connect to the database 
+2020/09/21 10:59:58 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:00:01 INFO 	Trying to reconnect to the database
+2020/09/21 11:00:03 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:00:06 INFO 	Trying to reconnect to the database
+2020/09/21 11:00:08 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/21 11:00:11 INFO 	Trying to reconnect to the database
+2020/09/21 11:00:13 INFO 	Database connection was successful 
+2020/09/21 11:00:13 INFO 	Try to access the database to write a table users
+2020/09/21 11:00:13 INFO 	Database query prepared: [insert into users ( name, surname, age ) values ( "Dima" , "Koles", "43")]
+2020/09/21 11:00:13 INFO 	The row was successfully added to the table users

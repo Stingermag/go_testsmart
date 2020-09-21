@@ -133,10 +133,11 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	if err = db.Ping(); err != nil {
 		log.Print("ERROR \t", "Error while connecting to database "+err.Error())
 		//период переподключения
-		timer1 := time.NewTimer(time.Second * 10)
+		timer1 := time.NewTimer(time.Second * 3)
 		go func() {
 			//кличество попыток переподключения
-			for i := 0; i < 2; i++ {
+			timescount := 5
+			for i := 0; i < timescount; i++ {
 				<-timer1.C
 				db.Close()
 				log.Print("INFO \t", "Trying to reconnect to the database")
@@ -149,13 +150,17 @@ func test(rw http.ResponseWriter, req *http.Request) {
 				//проверка на успешное подключение
 				if err = db.Ping(); err != nil {
 					log.Print("ERROR \t", "Error while connecting to database "+err.Error())
-					return
+					{
+						timer1 = time.NewTimer(time.Second * 3)
+						continue
+					}
 				} else {
 					defer db.Close()
 					log.Print("INFO \t", "Database connection was successful ")
 
-					//функция обработки входящих запросов
+					//функция ввода в базу данных
 					insertToBD(requesrobj, db)
+					return
 
 				}
 			}
@@ -164,7 +169,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		defer db.Close()
 		log.Print("INFO \t", "Database connection was successful")
 
-		//функция обработки входящих запросов
+		//функция ввода в базу данных
 		insertToBD(requesrobj, db)
 	}
 }

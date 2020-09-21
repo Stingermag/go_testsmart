@@ -22,23 +22,3 @@
 2020/09/17 20:07:37 INFO 	Попытка обращения к базе данных для записи таблицы users
 2020/09/17 20:07:37 INFO 	Подготовлен запрос к базе данных: [insert into users ( name, sеurname, age ) values ( "Dima" , "Koles", "43")]
 2020/09/17 20:07:37 ERROR 	Запись  в таблицуusers не удалась Error 1054: Unknown column 'sеurname' in 'field list'
-2020/09/17 20:08:15 http: panic serving [::1]:62496: runtime error: index out of range [2] with length 2
-goroutine 6 [running]:
-net/http.(*conn).serve.func1(0xc00005cbe0)
-	c:/go/src/net/http/server.go:1801 +0x147
-panic(0x713940, 0xc00000ab80)
-	c:/go/src/runtime/panic.go:975 +0x3e9
-main.validatesize(0xc00014c000, 0x3, 0x4, 0xc000012b08, 0x5, 0xc00001e400, 0x2, 0x4, 0x685abc)
-	D:/Server/data/htdocs/goProj/main.go:56 +0x31a
-main.test(0x78e240, 0xc0001361c0, 0xc000146000)
-	D:/Server/data/htdocs/goProj/main.go:108 +0x351
-net/http.HandlerFunc.ServeHTTP(0x7495d8, 0x78e240, 0xc0001361c0, 0xc000146000)
-	c:/go/src/net/http/server.go:2042 +0x4b
-net/http.(*ServeMux).ServeHTTP(0x90fe40, 0x78e240, 0xc0001361c0, 0xc000146000)
-	c:/go/src/net/http/server.go:2417 +0x1b7
-net/http.serverHandler.ServeHTTP(0xc000136000, 0x78e240, 0xc0001361c0, 0xc000146000)
-	c:/go/src/net/http/server.go:2843 +0xaa
-net/http.(*conn).serve(0xc00005cbe0, 0x78e800, 0xc00008a000)
-	c:/go/src/net/http/server.go:1925 +0x8ad
-created by net/http.(*Server).Serve
-	c:/go/src/net/http/server.go:2969 +0x36d

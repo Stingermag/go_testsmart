@@ -1,24 +1,31 @@
+POST http://localhost:3001
+Content-Type: application/json
+
 {
 "table": "users",
-"into":	[{
-	"column": "name",
-	"size":"100"
-	},
-	{
-	"column": "surname",
-	"size":"100"
-	},
-	{
-	"column": "age",
-	"size":"3"
-	}],
-"values":[{
-	"value": "Dima"
-	},
-	{
-	"value": "Koles"
-	},
-	{
-	"value": "43"
-	}]
+"into":	[
+{
+"column": "name",
+"size":"100"
+},
+{
+"column": "surname",
+"size":"100"
+},
+{
+"column": "age",
+"size":"3"
+}],
+"values":[
+{
+"value": "Dima"
+},
+{
+"value": "Koles"
+},
+{
+"value": "44444444444444443"
+}]
 }
+
+###

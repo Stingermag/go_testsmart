@@ -25,6 +25,13 @@ type reqeststruct struct {
 		Value string `json:"value"`
 	} `json:"values"`
 }
+type responsestruct struct {
+	// Body []struct {
+	// 	Body string `json:"data"`
+	// } `json:"body"`
+	Body  string `json:"bady"`
+	Error bool   `json:"error"`
+}
 
 //функция удаляет старые логи
 func deloldlogs(logfile *os.File) {
@@ -99,7 +106,7 @@ func insertToBD(requesrobj reqeststruct, db *sql.DB) {
 }
 
 //функция с подключением к бд и записью тела запроса
-func test(rw http.ResponseWriter, req *http.Request) {
+func test(w http.ResponseWriter, req *http.Request) {
 
 	//указание вывода лого в файл
 	logfile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
@@ -115,11 +122,29 @@ func test(rw http.ResponseWriter, req *http.Request) {
 	}
 	log.SetOutput(logfile)
 
+	//формирование ответа сервера
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	resp := responsestruct{
+		Body:  "Data accepted for processing",
+		Error: false}
+
 	//запись тела запроса в структуру
 	var requestobj reqeststruct
 	json.NewDecoder(req.Body).Decode(&requestobj)
+
 	if validatesize(requestobj) {
+		resp.Error = true
+		resp.Body = "Data not correct"
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			panic(err)
+		}
 		return
+	}
+
+	//апи ответ
+	if err := json.NewEncoder(w).Encode(resp); err != nil {
+		panic(err)
 	}
 
 	//подключение к бд
@@ -172,6 +197,7 @@ func test(rw http.ResponseWriter, req *http.Request) {
 		//функция ввода в базу данных
 		insertToBD(requestobj, db)
 	}
+
 }
 
 func main() {

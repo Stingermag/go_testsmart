@@ -10,3 +10,24 @@
 2020/09/21 11:16:22 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
 2020/09/21 11:16:25 INFO 	Trying to reconnect to the database
 2020/09/21 11:16:27 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:15 http: superfluous response.WriteHeader call from main.test (main.go:145)
+2020/09/23 08:20:15 INFO 	Trying to connect to the database 
+2020/09/23 08:20:17 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:20 INFO 	Trying to reconnect to the database
+2020/09/23 08:20:22 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:25 INFO 	Trying to reconnect to the database
+2020/09/23 08:20:28 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:31 INFO 	Trying to reconnect to the database
+2020/09/23 08:20:33 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:36 INFO 	Trying to reconnect to the database
+2020/09/23 08:20:38 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:20:41 INFO 	Trying to reconnect to the database
+2020/09/23 08:20:43 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:23:20 ERROR 	The received data from the request is not valid. Argument [43564646] (8) is outside the field size age(3)
+2020/09/23 08:24:27 ERROR 	The received data from the request is not valid. Argument [43564646] (8) is outside the field size age(3)
+2020/09/23 08:24:36 INFO 	Trying to connect to the database 
+2020/09/23 08:24:38 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:24:41 INFO 	Trying to reconnect to the database
+2020/09/23 08:24:43 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.
+2020/09/23 08:24:46 INFO 	Trying to reconnect to the database
+2020/09/23 08:24:48 ERROR 	Error while connecting to database dial tcp 127.0.0.1:3306: connectex: No connection could be made because the target machine actively refused it.

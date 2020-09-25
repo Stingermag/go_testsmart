@@ -5,14 +5,14 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 type reqeststruct struct {
@@ -26,12 +26,80 @@ type reqeststruct struct {
 	} `json:"values"`
 }
 type responsestruct struct {
-	// Body []struct {
-	// 	Body string `json:"data"`
-	// } `json:"body"`
 	Body  string `json:"bady"`
 	Error bool   `json:"error"`
 }
+
+var timer1 = time.NewTimer(time.Second*10)
+func reconnect()  {
+//	timer1 := time.NewTimer(time.Second * 10)
+	go func() {
+		//цикл с переподелючением
+		for {
+			fmt.Print("так так")
+			<-timer1.C
+			errorrequests = nil
+			var errorreqs []reqeststruct //в этой полученные из файла
+			file, err := os.OpenFile("errrequests.json", os.O_RDWR, 0666)
+			var reqDecoder *json.Decoder = json.NewDecoder(file)
+			if err != nil {
+				log.Fatal(err)
+			}
+			err = reqDecoder.Decode(&errorreqs)
+			if err != nil {
+				log.Fatal(err)
+			}
+			for i,_ := range errorreqs{
+				errorrequests = append(errorrequests, errorreqs[i])
+			}
+			file.Close()
+
+
+			if len(errorrequests) == 0 {
+				timer1 = time.NewTimer(time.Second * 10)
+				fmt.Print("Файл пуст")
+				continue
+			}
+				log.Print("INFO \t", "Trying to reconnect to the database")
+			//переподключение к бд
+			db, err := sql.Open("mysql", "root:password@/go_testsmart_user")
+			if err != nil {
+				panic(err)
+			}
+
+			//проверка на успешное подключение
+			if err = db.Ping(); err != nil {
+				log.Print("ERROR \t", "Error while connecting to database "+err.Error())
+				{
+					fmt.Print("")
+					timer1 = time.NewTimer(time.Second * 10)
+					db.Close()
+					continue
+				}
+			} else {
+
+				log.Print("INFO \t", "Database connection was successful ")
+
+				//функция ввода в базу данных
+				for i :=0;i< len(errorrequests);i++ {
+					//insertToBD(errorrequests[i], db)
+				}
+				fmt.Print("Файл очищен, записано все в бд")
+				//остановить таймер, очистить файл
+				os.Create("errrequests.json")
+				file, err = os.OpenFile("errrequests.json", os.O_RDWR, 0666)
+				io.WriteString(file, "[]")
+				file.Close()
+				db.Close()
+				timer1 = time.NewTimer(time.Second * 10)
+				//timer1.Stop()
+			}
+
+		}
+	}()
+
+}
+
 
 //функция удаляет старые логи
 func deloldlogs(logfile *os.File) {
@@ -108,19 +176,7 @@ func insertToBD(requesrobj reqeststruct, db *sql.DB) {
 //функция с подключением к бд и записью тела запроса
 func test(w http.ResponseWriter, req *http.Request) {
 
-	//указание вывода лого в файл
-	logfile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.SetOutput(logfile)
-	defer logfile.Close()
-	deloldlogs(logfile)
-	logfile, err = os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.SetOutput(logfile)
+
 
 	//формирование ответа сервера
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -131,6 +187,7 @@ func test(w http.ResponseWriter, req *http.Request) {
 
 	//запись тела запроса в структуру
 	var requestobj reqeststruct
+
 	json.NewDecoder(req.Body).Decode(&requestobj)
 
 	if validatesize(requestobj) {
@@ -156,52 +213,96 @@ func test(w http.ResponseWriter, req *http.Request) {
 
 	//проверка на успешное подключение
 	if err = db.Ping(); err != nil {
+		errorrequests = nil
+		var errorreqs []reqeststruct //в этой полученные из файла
 		log.Print("ERROR \t", "Error while connecting to database "+err.Error())
-		//период переподключения
-		timer1 := time.NewTimer(time.Second * 3)
-		go func() {
-			//кличество попыток переподключения
-			timescount := 5
-			for i := 0; i < timescount; i++ {
-				<-timer1.C
-				db.Close()
-				log.Print("INFO \t", "Trying to reconnect to the database")
-				//переподключение к бд
-				db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
-				if err != nil {
-					panic(err)
-				}
+		errorrequests = append(errorrequests, requestobj)
 
-				//проверка на успешное подключение
-				if err = db.Ping(); err != nil {
-					log.Print("ERROR \t", "Error while connecting to database "+err.Error())
-					{
-						timer1 = time.NewTimer(time.Second * 3)
-						continue
-					}
-				} else {
-					defer db.Close()
-					log.Print("INFO \t", "Database connection was successful ")
-
-					//функция ввода в базу данных
-					insertToBD(requestobj, db)
-					return
-
-				}
-			}
-		}()
+		//fmt.Print(string(result))
+		file, err := os.OpenFile("errrequests.json", os.O_RDWR, 0666)
+		//file, err := os.OpenFile("errrequests.json", os.O_CREATE, os.ModePerm)
+		var reqDecoder *json.Decoder = json.NewDecoder(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = reqDecoder.Decode(&errorreqs)
+		if err != nil {
+			log.Fatal(err)
+		}
+		for i,_ := range errorreqs{
+			errorrequests = append(errorrequests, errorreqs[i])
+		}
+		result, error := json.Marshal(errorrequests)
+		if error != nil {
+			log.Fatalln(err)
+		}
+		file.Close()
+		os.Create("errrequests.json")
+		file, err = os.OpenFile("errrequests.json", os.O_RDWR, 0666)
+		n, err := io.WriteString(file, string(result))
+		if err != nil {
+			fmt.Println(n, err)
+		}
+		file.Close()
+	//	timer1 = time.NewTimer(time.Second * 10)
+		//функция переподключения для записи незаписанных данных
+		//timer1 := time.NewTimer(time.Second * 10)
+		//go func() {
+		//	//цикл с переподелючением
+		//	for {
+		//		<-timer1.C
+		//		db.Close()
+		//		log.Print("INFO \t", "Trying to reconnect to the database")
+		//		//переподключение к бд
+		//		db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
+		//		if err != nil {
+		//			panic(err)
+		//		}
+		//
+		//		//проверка на успешное подключение
+		//		if err = db.Ping(); err != nil {
+		//			log.Print("ERROR \t", "Error while connecting to database "+err.Error())
+		//			{
+		//				timer1 = time.NewTimer(time.Second * 10)
+		//				continue
+		//			}
+		//		} else {
+		//			defer db.Close()
+		//			log.Print("INFO \t", "Database connection was successful ")
+		//
+		//			//функция ввода в базу данных
+		//			insertToBD(requestobj, db)
+		//			return
+		//
+		//		}
+		//	}
+		//}()
 	} else {
 		defer db.Close()
 		log.Print("INFO \t", "Database connection was successful")
+
 
 		//функция ввода в базу данных
 		insertToBD(requestobj, db)
 	}
 
 }
-
+var errorrequests []reqeststruct //в этой  все запросы
 func main() {
-
+	//указание вывода лого в файл
+	logfile, err := os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.SetOutput(logfile)
+	defer logfile.Close()
+	deloldlogs(logfile)
+	logfile, err = os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.SetOutput(logfile)
+	reconnect()
 	http.HandleFunc("/", test)
 	log.Fatal(http.ListenAndServe(":3001", nil))
 }

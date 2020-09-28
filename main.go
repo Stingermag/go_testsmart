@@ -31,13 +31,13 @@ type responsestruct struct {
 }
 
 var timer1 = time.NewTimer(time.Second*10)
-func reconnect()  {
+func reconnect(logfile  *os.File)  {
 //	timer1 := time.NewTimer(time.Second * 10)
 	go func() {
 		//цикл с переподелючением
 		for {
-			fmt.Print("так так")
 			<-timer1.C
+			deloldlogs(logfile)
 			errorrequests = nil
 			var errorreqs []reqeststruct //в этой полученные из файла
 			file, err := os.OpenFile("errrequests.json", os.O_RDWR, 0666)
@@ -54,13 +54,11 @@ func reconnect()  {
 			}
 			file.Close()
 
-
 			if len(errorrequests) == 0 {
 				timer1 = time.NewTimer(time.Second * 10)
-				fmt.Print("Файл пуст")
 				continue
 			}
-				log.Print("INFO \t", "Trying to reconnect to the database")
+			log.Print("INFO \t", "Trying to reconnect to the database")
 			//переподключение к бд
 			db, err := sql.Open("mysql", "root:password@/go_testsmart_user")
 			if err != nil {
@@ -71,20 +69,18 @@ func reconnect()  {
 			if err = db.Ping(); err != nil {
 				log.Print("ERROR \t", "Error while connecting to database "+err.Error())
 				{
-					fmt.Print("")
 					timer1 = time.NewTimer(time.Second * 10)
 					db.Close()
 					continue
 				}
 			} else {
-
 				log.Print("INFO \t", "Database connection was successful ")
 
 				//функция ввода в базу данных
 				for i :=0;i< len(errorrequests);i++ {
-					//insertToBD(errorrequests[i], db)
+					insertToBD(errorrequests[i], db)
 				}
-				fmt.Print("Файл очищен, записано все в бд")
+
 				//остановить таймер, очистить файл
 				os.Create("errrequests.json")
 				file, err = os.OpenFile("errrequests.json", os.O_RDWR, 0666)
@@ -92,7 +88,6 @@ func reconnect()  {
 				file.Close()
 				db.Close()
 				timer1 = time.NewTimer(time.Second * 10)
-				//timer1.Stop()
 			}
 
 		}
@@ -105,11 +100,17 @@ func reconnect()  {
 func deloldlogs(logfile *os.File) {
 	fileScanner := bufio.NewScanner(logfile)
 	lineCount := 0
+	fi,err := os.Stat("test.log")
+	if err!=nil{
+		fmt.Print(err.Error())
+	}
+	size:=fi.Size()
+
 	for fileScanner.Scan() {
 		lineCount++
 	}
 	//количество сохраняемых строк логов
-	if lineCount > 40 {
+	if size > 1000 {
 
 		input, err := ioutil.ReadFile("test.log")
 		if err != nil {
@@ -123,7 +124,15 @@ func deloldlogs(logfile *os.File) {
 		}
 		logfile.Close()
 		os.Create("test.log")
+
+
 	}
+
+	logfile, err = os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.SetOutput(logfile)
 }
 
 //валидация размерности и количества аргументов
@@ -218,9 +227,7 @@ func test(w http.ResponseWriter, req *http.Request) {
 		log.Print("ERROR \t", "Error while connecting to database "+err.Error())
 		errorrequests = append(errorrequests, requestobj)
 
-		//fmt.Print(string(result))
 		file, err := os.OpenFile("errrequests.json", os.O_RDWR, 0666)
-		//file, err := os.OpenFile("errrequests.json", os.O_CREATE, os.ModePerm)
 		var reqDecoder *json.Decoder = json.NewDecoder(file)
 		if err != nil {
 			log.Fatal(err)
@@ -245,38 +252,7 @@ func test(w http.ResponseWriter, req *http.Request) {
 		}
 		file.Close()
 	//	timer1 = time.NewTimer(time.Second * 10)
-		//функция переподключения для записи незаписанных данных
-		//timer1 := time.NewTimer(time.Second * 10)
-		//go func() {
-		//	//цикл с переподелючением
-		//	for {
-		//		<-timer1.C
-		//		db.Close()
-		//		log.Print("INFO \t", "Trying to reconnect to the database")
-		//		//переподключение к бд
-		//		db, err = sql.Open("mysql", "root:password@/go_testsmart_user")
-		//		if err != nil {
-		//			panic(err)
-		//		}
-		//
-		//		//проверка на успешное подключение
-		//		if err = db.Ping(); err != nil {
-		//			log.Print("ERROR \t", "Error while connecting to database "+err.Error())
-		//			{
-		//				timer1 = time.NewTimer(time.Second * 10)
-		//				continue
-		//			}
-		//		} else {
-		//			defer db.Close()
-		//			log.Print("INFO \t", "Database connection was successful ")
-		//
-		//			//функция ввода в базу данных
-		//			insertToBD(requestobj, db)
-		//			return
-		//
-		//		}
-		//	}
-		//}()
+
 	} else {
 		defer db.Close()
 		log.Print("INFO \t", "Database connection was successful")
@@ -296,13 +272,8 @@ func main() {
 	}
 	log.SetOutput(logfile)
 	defer logfile.Close()
-	deloldlogs(logfile)
-	logfile, err = os.OpenFile("test.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.SetOutput(logfile)
-	reconnect()
+
+	reconnect(logfile)
 	http.HandleFunc("/", test)
 	log.Fatal(http.ListenAndServe(":3001", nil))
 }

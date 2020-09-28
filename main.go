@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -32,7 +31,6 @@ type responsestruct struct {
 
 var timer1 = time.NewTimer(time.Second*10)
 func reconnect(logfile  *os.File)  {
-//	timer1 := time.NewTimer(time.Second * 10)
 	go func() {
 		//цикл с переподелючением
 		for {
@@ -89,28 +87,21 @@ func reconnect(logfile  *os.File)  {
 				db.Close()
 				timer1 = time.NewTimer(time.Second * 10)
 			}
-
 		}
 	}()
-
 }
-
 
 //функция удаляет старые логи
 func deloldlogs(logfile *os.File) {
-	fileScanner := bufio.NewScanner(logfile)
-	lineCount := 0
+
 	fi,err := os.Stat("test.log")
 	if err!=nil{
 		fmt.Print(err.Error())
 	}
 	size:=fi.Size()
 
-	for fileScanner.Scan() {
-		lineCount++
-	}
-	//количество сохраняемых строк логов
-	if size > 1000 {
+	//количество сохраняемых байт логов
+	if size > 10000 {
 
 		input, err := ioutil.ReadFile("test.log")
 		if err != nil {
@@ -124,7 +115,6 @@ func deloldlogs(logfile *os.File) {
 		}
 		logfile.Close()
 		os.Create("test.log")
-
 
 	}
 
@@ -251,8 +241,6 @@ func test(w http.ResponseWriter, req *http.Request) {
 			fmt.Println(n, err)
 		}
 		file.Close()
-	//	timer1 = time.NewTimer(time.Second * 10)
-
 	} else {
 		defer db.Close()
 		log.Print("INFO \t", "Database connection was successful")
